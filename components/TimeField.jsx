@@ -2,17 +2,42 @@
 
 import React, { useState, useEffect } from 'react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import moment from 'moment-timezone'
 
 function TimeField() {
-  async function fetchTimezones() {
-    const response = await fetch("https://timeapi.io/api/timezone/availabletimezones")
-    const data = await response.json()
+  const [selectedTimezone, setSelectedTimezone] = useState("UTC")
+  const [allTimezones, setAllTimezones] = useState([])
 
-    console.log(data);
+  async function getAllTimezones() {
+    const timezones = moment.tz.names()
+    const rawTimezoneAbbreviations = timezones.map((timezone) => {
+      let abbreviation = moment.tz(timezone).zoneAbbr()
+
+      if (abbreviation.startsWith("+") || abbreviation.startsWith("-")) {
+        if (abbreviation.length <= 3) {
+          abbreviation = abbreviation + ":00"
+        } else {
+          abbreviation = abbreviation.substring(0, 3) + ":" + abbreviation.substring(3)
+        }
+
+        abbreviation = "UTC".concat(abbreviation)
+      }
+
+      return abbreviation
+    })
+
+    const allTimezoneAbbreviations = new Set(rawTimezoneAbbreviations)
+    const timezoneAbbreviations = [...allTimezoneAbbreviations]
+
+    setAllTimezones(timezoneAbbreviations.sort())
+  }
+
+  function onTimezoneSelected(timezone) {
+    setSelectedTimezone(timezone)
   }
 
   useEffect(() => {
-    fetchTimezones()
+    getAllTimezones()
   }, [])
 
 
@@ -24,22 +49,19 @@ function TimeField() {
         <div className='h-auto w-[1.5px] self-stretch bg-gradient-to-tr from-transparent via-black to-transparent opacity-60' />
 
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button className='inline-flex items-center px-4 text-dark-grey text-2xl'>
-              UTC
-              <div className="inline-flex justify-center ml-2 border border-dark-grey rounded-md">
-                <span className="material-symbols-outlined">keyboard_arrow_down</span>
-              </div>
-            </button>
+          <DropdownMenuTrigger className='inline-flex items-center px-4 text-dark-grey text-2xl outline-none'>
+            {selectedTimezone}
+            <div className="inline-flex justify-center ml-2 border border-dark-grey rounded-md">
+              <span className="material-symbols-outlined">keyboard_arrow_down</span>
+            </div>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem>
-              Hello
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              World
-            </DropdownMenuItem>
+          <DropdownMenuContent align="end" className="max-h-64 max-w-max overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
+            {allTimezones.map((timezone) => (
+              <DropdownMenuItem key={timezone} onClick={() => onTimezoneSelected(timezone)}>
+                {timezone}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
