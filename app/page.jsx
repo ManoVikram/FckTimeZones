@@ -3,7 +3,7 @@ import React from 'react'
 
 function HomeScreen() {
   return (
-    <div className='flex flex-col bg-primary-color px-10 py-12 rounded-[40px]'>
+    <div className='flex flex-col bg-primary-color mx-24 my-28 px-10 py-12 rounded-[40px]'>
         <p className='font-bold text-xl text-light-grey mb-8'>Ahh Just Fck It!</p>
         
         <div className='flex flex-row justify-between'>

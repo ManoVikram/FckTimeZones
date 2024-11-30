@@ -1,6 +1,6 @@
 import React from 'react'
 import '@/styles/globals.css'
-import { Roboto } from '@next/font/google'
+import { Roboto } from 'next/font/google'
 
 export const metadata = {
     title: "Fck Time Zones",
