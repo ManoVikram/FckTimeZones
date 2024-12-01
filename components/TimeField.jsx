@@ -4,7 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 function TimeField({ allTimezones, selectedTimezone, time, onTimezoneSelected }) {
   return (
     <div className="flex flex-row bg-white h-16 py-4 px-5 rounded-xl justify-between">
-      <input type="text" name='from-time' placeholder='00:00 AM/PM' value={time} className='focus:outline-none text-2xl mr-5' />
+      <input type="text" name='from-time' placeholder='00:00 AM/PM' defaultValue={time} className='focus:outline-none text-2xl mr-5' />
 
       <div className="flex flex-row">
         <div className='h-auto w-[1.5px] self-stretch bg-gradient-to-tr from-transparent via-black to-transparent opacity-60' />
@@ -19,8 +19,8 @@ function TimeField({ allTimezones, selectedTimezone, time, onTimezoneSelected })
 
           <DropdownMenuContent align="end" className="max-h-64 max-w-max overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
             {allTimezones.map((timezone) => (
-              <DropdownMenuItem key={timezone} onClick={() => onTimezoneSelected(timezone)}>
-                {timezone}
+              <DropdownMenuItem key={timezone.abbreviation} onClick={() => onTimezoneSelected(timezone.abbreviation)}>
+                {timezone.abbreviation}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>

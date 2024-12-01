@@ -5,39 +5,60 @@ import moment from 'moment-timezone'
 import TimeField from '@/components/TimeField'
 
 function HomeScreen() {
-  const [selectedTimezone, setSelectedTimezone] = useState("UTC")
+  const [selectedFromTimezone, setSelectedFromTimezone] = useState("IST")
+  const [selectedToTimezone, setSelectedToTimezone] = useState("UTC")
+  const [fromTime, setFromTime] = useState("")
+  const [toTime, setToTime] = useState("")
   const [allTimezones, setAllTimezones] = useState([])
 
   async function getAllTimezones() {
     const timezones = moment.tz.names()
-    const rawTimezoneAbbreviations = timezones.map((timezone) => {
+    const timezoneData = timezones.map((timezone) => {
       let abbreviation = moment.tz(timezone).zoneAbbr()
+      const offsetInMinutes = moment.tz(timezone).utcOffset()
+      const offset = `${offsetInMinutes >= 0 ? "+" : "-"}${Math.floor(Math.abs(offsetInMinutes / 60)).toString().padStart(2, "0")}:${Math.abs(offsetInMinutes % 60).toString().padStart(2, "0")}`
 
       if (abbreviation.startsWith("+") || abbreviation.startsWith("-")) {
-        if (abbreviation.length <= 3) {
-          abbreviation = abbreviation + ":00"
-        } else {
-          abbreviation = abbreviation.substring(0, 3) + ":" + abbreviation.substring(3)
-        }
-
-        abbreviation = "UTC".concat(abbreviation)
+        abbreviation = `UTC${offset}`
       }
 
-      return abbreviation
+      return {
+        abbreviation: abbreviation,
+        offset: offset,
+        timezone: timezone
+      }
     })
 
-    const allTimezoneAbbreviations = new Set(rawTimezoneAbbreviations)
-    const timezoneAbbreviations = [...allTimezoneAbbreviations]
+    const uniqueTimezones = Array.from(
+      new Map(
+        timezoneData.map((data) => [data.abbreviation, data])
+      ).values()
+    )
 
-    setAllTimezones(timezoneAbbreviations.sort())
+    console.log("asdfasfasdfasdfasfasdfas");
+    console.log(uniqueTimezones.sort((a, b) => a.abbreviation.localeCompare(b.abbreviation)));
+
+    setAllTimezones(uniqueTimezones.sort((a, b) => a.abbreviation.localeCompare(b.abbreviation)))
   }
 
-  function onTimezoneSelected(timezone) {
-    setSelectedTimezone(timezone)
+  function onFromTimezoneSelected(timezone) {
+    setSelectedFromTimezone(timezone)
+  }
+  
+  function onToTimezoneSelected(timezone) {
+    setSelectedToTimezone(timezone)
+  }
+
+  function getCurrentTime() {
+    var now = moment()
+    const currentFromTime = now.format("h:mm A")
+
+    setFromTime(currentFromTime)
   }
 
   useEffect(() => {
     getAllTimezones()
+    getCurrentTime()
   }, [])
 
   return (
@@ -48,11 +69,11 @@ function HomeScreen() {
         <p className='font-bold text-7xl leading-[1.3] text-drak-grey'>Sync the World,<br />Skip the Math.</p>
 
         <div className="inline-flex flex-col items-center mr-40">
-          <TimeField allTimezones={allTimezones} selectedTimezone={selectedTimezone} time="" onTimezoneSelected={onTimezoneSelected} />
+          <TimeField allTimezones={allTimezones} selectedTimezone={selectedFromTimezone} time={fromTime} onTimezoneSelected={onFromTimezoneSelected} />
 
           <span className="material-symbols-outlined my-4 h-10 w-10 text-5xl">swap_vert</span>
 
-          <TimeField allTimezones={allTimezones} selectedTimezone={selectedTimezone} time="" onTimezoneSelected={onTimezoneSelected} />
+          <TimeField allTimezones={allTimezones} selectedTimezone={selectedToTimezone} time={toTime} onTimezoneSelected={onToTimezoneSelected} />
         </div>
       </div>
     </div>
