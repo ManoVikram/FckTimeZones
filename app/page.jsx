@@ -35,18 +35,25 @@ function HomeScreen() {
       ).values()
     )
 
-    console.log("asdfasfasdfasdfasfasdfas");
     console.log(uniqueTimezones.sort((a, b) => a.abbreviation.localeCompare(b.abbreviation)));
 
     setAllTimezones(uniqueTimezones.sort((a, b) => a.abbreviation.localeCompare(b.abbreviation)))
   }
 
-  function onFromTimezoneSelected(timezone) {
-    setSelectedFromTimezone(timezone)
+  function onFromTimezoneSelected(timezoneAbbreviation) {
+    const selectedTimezoneData = allTimezones.find((timezone) => timezone.abbreviation === timezoneAbbreviation)
+
+    if (selectedTimezoneData) {
+      setSelectedFromTimezone(timezoneAbbreviation)
+    }
   }
   
-  function onToTimezoneSelected(timezone) {
-    setSelectedToTimezone(timezone)
+  function onToTimezoneSelected(timezoneAbbreviation) {
+    const selectedTimezoneData = allTimezones.find((timezone) => timezone.abbreviation === timezoneAbbreviation)
+
+    if (selectedTimezoneData) {
+      setSelectedToTimezone(timezoneAbbreviation)
+    }
   }
 
   function getCurrentTime() {
@@ -61,6 +68,22 @@ function HomeScreen() {
     getCurrentTime()
   }, [])
 
+  useEffect(() => {
+    function convertTime() {
+      const fromTimezone = allTimezones.find((timezone) => timezone.abbreviation === selectedFromTimezone)
+      const toTimezone = allTimezones.find((timezone) => timezone.abbreviation === selectedToTimezone)
+  
+      if (fromTimezone && toTimezone && fromTime) {
+        const inputTime = moment.tz(fromTime, "h:mm A", fromTimezone.timezone)
+        const convertedTime = inputTime.clone().tz(toTimezone.timezone)
+  
+        setToTime(convertedTime.format("h:mm A"))
+      }
+    }
+
+    convertTime()
+  }, [allTimezones, fromTime, selectedFromTimezone, selectedToTimezone])
+
   return (
     <div className='flex flex-col bg-primary-color mx-24 my-28 px-10 py-12 rounded-[40px]'>
       <p className='font-bold text-xl text-light-grey mb-8'>Ahh Just Fck It!</p>
@@ -73,7 +96,7 @@ function HomeScreen() {
 
           <span className="material-symbols-outlined my-4 h-10 w-10 text-5xl">swap_vert</span>
 
-          <TimeField allTimezones={allTimezones} selectedTimezone={selectedToTimezone} time={toTime} onTimezoneSelected={onToTimezoneSelected} />
+          <TimeField allTimezones={allTimezones} selectedTimezone={selectedToTimezone} time={toTime} onTimezoneSelected={onToTimezoneSelected} isReadOnly />
         </div>
       </div>
     </div>

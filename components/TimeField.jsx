@@ -1,10 +1,10 @@
 import React from 'react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
-function TimeField({ allTimezones, selectedTimezone, time, onTimezoneSelected }) {
+function TimeField({ allTimezones, selectedTimezone, time, onTimezoneSelected, isReadOnly }) {
   return (
     <div className="flex flex-row bg-white h-16 py-4 px-5 rounded-xl justify-between">
-      <input type="text" name='from-time' placeholder='00:00 AM/PM' defaultValue={time} className='focus:outline-none text-2xl mr-5' />
+      <input type="text" name='from-time' placeholder='00:00 AM/PM' defaultValue={time} className='focus:outline-none text-2xl mr-5' readOnly={isReadOnly} />
 
       <div className="flex flex-row">
         <div className='h-auto w-[1.5px] self-stretch bg-gradient-to-tr from-transparent via-black to-transparent opacity-60' />
