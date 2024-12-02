@@ -63,6 +63,19 @@ function HomeScreen() {
     setFromTime(currentFromTime)
   }
 
+  function swapTimezones() {
+    const fromTimezone = selectedFromTimezone
+    const toTimezone = selectedToTimezone
+    const time1 = fromTime
+    const time2 = toTime
+
+    setSelectedFromTimezone(toTimezone)
+    setSelectedToTimezone(fromTimezone)
+
+    setFromTime(time2)
+    setToTime(time1)
+  }
+
   useEffect(() => {
     getAllTimezones()
     getCurrentTime()
@@ -94,9 +107,11 @@ function HomeScreen() {
         <p className='font-bold text-7xl leading-[1.3] text-drak-grey'>Sync the World,<br />Skip the Math.</p>
 
         <div className="inline-flex flex-col items-center mr-40">
-          <TimeField allTimezones={allTimezones} selectedTimezone={selectedFromTimezone} time={fromTime} onTimezoneSelected={onFromTimezoneSelected} />
+          <TimeField allTimezones={allTimezones} selectedTimezone={selectedFromTimezone} time={fromTime} onTimezoneSelected={onFromTimezoneSelected} onTimeChange={onTimeChange} />
 
-          <span className="material-symbols-outlined my-4 h-10 w-10 text-5xl">swap_vert</span>
+          <button type="button" onClick={swapTimezones}>
+            <span className="material-symbols-outlined my-4 h-10 w-10 text-5xl">swap_vert</span>
+          </button>
 
           <TimeField allTimezones={allTimezones} selectedTimezone={selectedToTimezone} time={toTime} onTimezoneSelected={onToTimezoneSelected} isReadOnly />
         </div>
