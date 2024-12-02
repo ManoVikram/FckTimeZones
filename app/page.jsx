@@ -5,11 +5,11 @@ import moment from 'moment-timezone'
 import TimeField from '@/components/TimeField'
 
 function HomeScreen() {
-  const [selectedFromTimezone, setSelectedFromTimezone] = useState("IST")
-  const [selectedToTimezone, setSelectedToTimezone] = useState("UTC")
+  const [allTimezones, setAllTimezones] = useState([])
+  const [selectedFromTimezone, setSelectedFromTimezone] = useState("IST (UTC+05:30) - Asia/Kolkata")
+  const [selectedToTimezone, setSelectedToTimezone] = useState("UTC (UTC+00:00) - Zulu")
   const [fromTime, setFromTime] = useState("")
   const [toTime, setToTime] = useState("")
-  const [allTimezones, setAllTimezones] = useState([])
 
   async function getAllTimezones() {
     const timezones = moment.tz.names()
@@ -24,6 +24,7 @@ function HomeScreen() {
 
       return {
         abbreviation: abbreviation,
+        displayName: `${abbreviation} (UTC${offset}) - ${timezone}`,
         offset: offset,
         timezone: timezone
       }
@@ -31,28 +32,27 @@ function HomeScreen() {
 
     const uniqueTimezones = Array.from(
       new Map(
-        timezoneData.map((data) => [data.abbreviation, data])
+        timezoneData.map((data) => [`${data.abbreviation}_${data.offset}`, data])
       ).values()
     )
+    const sortedTimezones = uniqueTimezones.sort((a, b) => a.displayName.localeCompare(b.displayName))
 
-    console.log(uniqueTimezones.sort((a, b) => a.abbreviation.localeCompare(b.abbreviation)));
-
-    setAllTimezones(uniqueTimezones.sort((a, b) => a.abbreviation.localeCompare(b.abbreviation)))
+    setAllTimezones(sortedTimezones)
   }
 
-  function onFromTimezoneSelected(timezoneAbbreviation) {
-    const selectedTimezoneData = allTimezones.find((timezone) => timezone.abbreviation === timezoneAbbreviation)
+  function onFromTimezoneSelected(selectedTimezone) {
+    const selectedTimezoneData = allTimezones.find((timezone) => timezone.timezone === selectedTimezone)
 
     if (selectedTimezoneData) {
-      setSelectedFromTimezone(timezoneAbbreviation)
+      setSelectedFromTimezone(selectedTimezoneData.displayName)
     }
   }
-  
-  function onToTimezoneSelected(timezoneAbbreviation) {
-    const selectedTimezoneData = allTimezones.find((timezone) => timezone.abbreviation === timezoneAbbreviation)
+
+  function onToTimezoneSelected(selectedTimezone) {
+    const selectedTimezoneData = allTimezones.find((timezone) => timezone.timezone === selectedTimezone)
 
     if (selectedTimezoneData) {
-      setSelectedToTimezone(timezoneAbbreviation)
+      setSelectedToTimezone(selectedTimezoneData.displayName)
     }
   }
 
@@ -70,13 +70,15 @@ function HomeScreen() {
 
   useEffect(() => {
     function convertTime() {
-      const fromTimezone = allTimezones.find((timezone) => timezone.abbreviation === selectedFromTimezone)
-      const toTimezone = allTimezones.find((timezone) => timezone.abbreviation === selectedToTimezone)
-  
+      const fromTimezone = allTimezones.find((timezone) => timezone.displayName === selectedFromTimezone)
+      const toTimezone = allTimezones.find((timezone) => timezone.displayName === selectedToTimezone)
+
       if (fromTimezone && toTimezone && fromTime) {
         const inputTime = moment.tz(fromTime, "h:mm A", fromTimezone.timezone)
-        const convertedTime = inputTime.clone().tz(toTimezone.timezone)
-  
+        console.log(inputTime);
+
+        const convertedTime = moment(inputTime).tz(toTimezone.timezone)
+
         setToTime(convertedTime.format("h:mm A"))
       }
     }

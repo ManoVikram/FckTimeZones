@@ -19,8 +19,8 @@ function TimeField({ allTimezones, selectedTimezone, time, onTimezoneSelected, i
 
           <DropdownMenuContent align="end" className="max-h-64 max-w-max overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
             {allTimezones.map((timezone) => (
-              <DropdownMenuItem key={timezone.abbreviation} onClick={() => onTimezoneSelected(timezone.abbreviation)}>
-                {timezone.abbreviation}
+              <DropdownMenuItem key={timezone.timezone} onClick={() => onTimezoneSelected(timezone.timezone)}>
+                {timezone.displayName}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
