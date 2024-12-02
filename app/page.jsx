@@ -66,6 +66,7 @@ function HomeScreen() {
   function swapTimezones() {
     const fromTimezone = selectedFromTimezone
     const toTimezone = selectedToTimezone
+
     const time1 = fromTime
     const time2 = toTime
 
@@ -74,6 +75,14 @@ function HomeScreen() {
 
     setFromTime(time2)
     setToTime(time1)
+  }
+
+  function onTimeChange(time) {
+    const isValidTime = moment(time, "h:mm A", true).isValid()
+
+    if (isValidTime) {
+      setFromTime(time)
+    } else { }
   }
 
   useEffect(() => {
