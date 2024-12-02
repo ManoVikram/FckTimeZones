@@ -82,7 +82,9 @@ function HomeScreen() {
 
     if (isValidTime) {
       setFromTime(time)
-    } else { }
+    } else {
+      // Maybe show a snackbar?
+    }
   }
 
   useEffect(() => {
