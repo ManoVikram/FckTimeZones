@@ -64,17 +64,17 @@ function HomeScreen() {
   }
 
   function swapTimezones() {
-    const fromTimezone = selectedFromTimezone
-    const toTimezone = selectedToTimezone
-
     const time1 = fromTime
     const time2 = toTime
+    
+    const fromTimezone = selectedFromTimezone
+    const toTimezone = selectedToTimezone
+    
+    setFromTime(time2)
+    setToTime(time1)
 
     setSelectedFromTimezone(toTimezone)
     setSelectedToTimezone(fromTimezone)
-
-    setFromTime(time2)
-    setToTime(time1)
   }
 
   function onTimeChange(time) {
@@ -102,6 +102,7 @@ function HomeScreen() {
         console.log(inputTime);
 
         const convertedTime = moment(inputTime).tz(toTimezone.timezone)
+        console.log(convertedTime);
 
         setToTime(convertedTime.format("h:mm A"))
       }
