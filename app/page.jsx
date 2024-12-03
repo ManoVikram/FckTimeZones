@@ -63,6 +63,30 @@ function HomeScreen() {
     setFromTime(currentFromTime)
   }
 
+  function swapTimezones() {
+    const time1 = fromTime
+    const time2 = toTime
+    
+    const fromTimezone = selectedFromTimezone
+    const toTimezone = selectedToTimezone
+    
+    setFromTime(time2)
+    setToTime(time1)
+
+    setSelectedFromTimezone(toTimezone)
+    setSelectedToTimezone(fromTimezone)
+  }
+
+  function onTimeChange(time) {
+    const isValidTime = moment(time, "h:mm A", true).isValid()
+
+    if (isValidTime) {
+      setFromTime(time)
+    } else {
+      // Maybe show a snackbar?
+    }
+  }
+
   useEffect(() => {
     getAllTimezones()
     getCurrentTime()
@@ -78,6 +102,7 @@ function HomeScreen() {
         console.log(inputTime);
 
         const convertedTime = moment(inputTime).tz(toTimezone.timezone)
+        console.log(convertedTime);
 
         setToTime(convertedTime.format("h:mm A"))
       }
@@ -94,9 +119,11 @@ function HomeScreen() {
         <p className='font-bold text-7xl leading-[1.3] text-drak-grey'>Sync the World,<br />Skip the Math.</p>
 
         <div className="inline-flex flex-col items-center mr-40">
-          <TimeField allTimezones={allTimezones} selectedTimezone={selectedFromTimezone} time={fromTime} onTimezoneSelected={onFromTimezoneSelected} />
+          <TimeField allTimezones={allTimezones} selectedTimezone={selectedFromTimezone} time={fromTime} onTimezoneSelected={onFromTimezoneSelected} onTimeChange={onTimeChange} />
 
-          <span className="material-symbols-outlined my-4 h-10 w-10 text-5xl">swap_vert</span>
+          <button type="button" onClick={swapTimezones}>
+            <span className="material-symbols-outlined my-4 h-10 w-10 text-5xl">swap_vert</span>
+          </button>
 
           <TimeField allTimezones={allTimezones} selectedTimezone={selectedToTimezone} time={toTime} onTimezoneSelected={onToTimezoneSelected} isReadOnly />
         </div>
